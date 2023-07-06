@@ -1,6 +1,7 @@
 package com.byandrev.lnks.controllers;
 
 import com.byandrev.lnks.dto.UserDTO;
+import com.byandrev.lnks.entities.Response;
 import com.byandrev.lnks.entities.UserEntity;
 import com.byandrev.lnks.entities.UserResponse;
 import com.byandrev.lnks.services.UserService;
@@ -33,7 +34,7 @@ public class UserController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody UserDTO userDTO) {
+    public ResponseEntity<Response> register(@RequestBody UserDTO userDTO) {
         UserEntity user = UserEntity
                 .builder()
                 .email(userDTO.getEmail())
@@ -42,7 +43,10 @@ public class UserController {
                 .build();
 
         if (userService.getUserByEmail(user.getEmail()) != null) {
-            return ResponseEntity.badRequest().body("User already exist");
+            Response httpResponse = Response.builder()
+                    .status(HttpStatus.BAD_REQUEST.value())
+                    .msg("Email already exist").build();
+            return new ResponseEntity<>(httpResponse, HttpStatus.BAD_REQUEST);
         }
 
         userService.createUser(user);
@@ -54,7 +58,11 @@ public class UserController {
                 .name(user.getName())
                 .build();
 
-        return ResponseEntity.ok(userResponse);
+        Response httpResponse = Response.builder()
+                .status(HttpStatus.CREATED.value())
+                .msg("User created")
+                .body(userResponse).build();
+        return new ResponseEntity<>(httpResponse, HttpStatus.CREATED);
     }
 
 }
