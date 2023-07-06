@@ -1,5 +1,6 @@
 package com.byandrev.lnks.security.jwt;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
@@ -9,6 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
+import java.util.function.Function;
 
 @Component
 public class JWTUtils {
@@ -42,6 +44,24 @@ public class JWTUtils {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public String getUsernameToken(String token) {
+        return this.getClaim(token, Claims::getSubject);
+    }
+
+    private <T> T getClaim(String token, Function<Claims, T> claimsTFunction) {
+        Claims claims = this.getAllClaims(token);
+        return claimsTFunction.apply(claims);
+    }
+
+    private Claims getAllClaims(String token) {
+        return Jwts
+                .parserBuilder()
+                .setSigningKey(this.getSignatureKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody();
     }
 
     private Key getSignatureKey() {
