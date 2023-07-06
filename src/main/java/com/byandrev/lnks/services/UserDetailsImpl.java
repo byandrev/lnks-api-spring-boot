@@ -1,6 +1,5 @@
 package com.byandrev.lnks.services;
 
-import com.byandrev.lnks.dao.UserRepository;
 import com.byandrev.lnks.entities.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -17,11 +16,11 @@ import java.util.Collection;
 public class UserDetailsImpl implements UserDetailsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity userEntity = userRepository.findByEmail(username);
+        UserEntity userEntity = userService.getUserByEmail(username);
 
         if (userEntity == null) {
             throw new UsernameNotFoundException("User not exist");

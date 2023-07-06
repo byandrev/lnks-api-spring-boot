@@ -26,8 +26,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserEntity getUserByEmail(String email) {
-        Optional<UserEntity> userEntityOptional = Optional.ofNullable(userRepository.findByEmail(email));
-        return userEntityOptional.orElse(null);
+        try {
+            return userRepository.findByEmail(email).orElse(null);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
 }
