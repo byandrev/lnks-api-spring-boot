@@ -1,18 +1,19 @@
 package com.byandrev.lnks.services;
 
 import com.byandrev.lnks.entities.LinkEntity;
+import com.byandrev.lnks.entities.UserEntity;
 
 import java.util.List;
 import java.util.Optional;
 
 public interface LinkService {
 
-    public void create(LinkEntity link);
+    void create(LinkEntity link);
 
-    public Optional<LinkEntity> getById(Long id);
+    Optional<LinkEntity> getById(Long id);
 
-    public List<LinkEntity> getAll();
+    List<LinkEntity> getAll(UserEntity userEntity);
 
-    public void delete(Long id);
+    void delete(Long id);
 
 }

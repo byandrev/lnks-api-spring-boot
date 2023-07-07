@@ -1,6 +1,7 @@
 package com.byandrev.lnks.services;
 
 import com.byandrev.lnks.entities.LinkEntity;
+import com.byandrev.lnks.entities.UserEntity;
 import com.byandrev.lnks.repositories.LinkRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,8 +26,8 @@ public class LinkServiceImpl implements LinkService {
     }
 
     @Override
-    public List<LinkEntity> getAll() {
-        return (List<LinkEntity>) linkRepository.findAll();
+    public List<LinkEntity> getAll(UserEntity userEntity) {
+        return (List<LinkEntity>) linkRepository.findAllByUser(userEntity);
     }
 
     @Override

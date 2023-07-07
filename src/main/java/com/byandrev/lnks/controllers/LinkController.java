@@ -26,8 +26,9 @@ public class LinkController {
     private UserService userService;
 
     @GetMapping
-    public ResponseEntity<Response> getAll() {
-        List<LinkEntity> links = linkService.getAll();
+    public ResponseEntity<Response> getAll(Principal principal) {
+        UserEntity userEntity = userService.getUserByEmail(principal.getName());
+        List<LinkEntity> links = linkService.getAll(userEntity);
 
         Response httpResponse = Response.builder()
                 .status(HttpStatus.OK.value())
@@ -47,7 +48,7 @@ public class LinkController {
                     .name(linkDTO.getName())
                     .url(linkDTO.getUrl())
                     .description(linkDTO.getDescription())
-                    .userAuthor(userEntity)
+                    .user(userEntity)
                     .build();
 
             linkService.create(link);

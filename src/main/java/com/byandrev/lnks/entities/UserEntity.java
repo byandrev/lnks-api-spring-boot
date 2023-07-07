@@ -35,10 +35,9 @@ public class UserEntity {
     private String email;
 
     @NotBlank
-    @JsonIgnore
     private String password;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonIgnore
     private List<LinkEntity> links = new ArrayList<>();
 

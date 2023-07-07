@@ -34,6 +34,6 @@ public class LinkEntity {
     @ManyToOne
     @JoinColumn(name = "id_user", nullable = false)
     @JsonIgnore
-    private UserEntity userAuthor;
+    private UserEntity user;
 
 }
