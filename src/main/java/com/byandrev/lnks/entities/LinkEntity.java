@@ -2,7 +2,6 @@ package com.byandrev.lnks.entities;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -10,37 +9,31 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.List;
-
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "users")
-public class UserEntity {
+@Table(name = "links")
+public class LinkEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Size(max = 60)
     @NotBlank
-    @Size(max = 30)
     private String name;
 
-    @Email
-    @NotBlank
-    @Size(max = 256)
-    private String email;
+    @Size(max = 255)
+    private String url;
 
-    @NotBlank
+    @Size(max = 255)
+    private String description;
+
+    @ManyToOne
+    @JoinColumn(name = "id_user", nullable = false)
     @JsonIgnore
-    private String password;
-
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    @JsonIgnore
-    private List<LinkEntity> links = new ArrayList<>();
-
+    private UserEntity userAuthor;
 
 }
