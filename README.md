@@ -21,4 +21,4 @@ JWT_TIME=
 
 ### Stop
 
-`docker stop #container-id`
+`docker compose down`
