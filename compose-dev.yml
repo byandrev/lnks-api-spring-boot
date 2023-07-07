@@ -1,0 +1,40 @@
+version: "3"
+
+services:
+  app:
+    build: .
+    restart: always
+    ports:
+      - 9001:8080
+    env_file: ./.env
+    environment:
+      MYSQL_DATABASE: $MYSQL_DATABASE
+      MYSQL_HOST: $MYSQL_HOST
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+      JWT_SECRET: $JWT_SECRET
+      JWT_TIME: $JWT_TIME
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - spring-mysql
+    depends_on:
+      - mysqldb
+  mysqldb:
+    image: mysql:8.0
+    restart: always
+    volumes:
+      - mysql:/var/lib/mysql
+    networks:
+      - spring-mysql
+    environment:
+      MYSQL_DATABASE: $MYSQL_DATABASE
+      MYSQL_USER: $MYSQL_USER
+      MYSQL_PASSWORD: $MYSQL_PASSWORD
+      MYSQL_ROOT_PASSWORD: $MYSQL_ROOT_PASSWORD
+
+volumes:
+  mysql:
+
+networks:
+  spring-mysql:
