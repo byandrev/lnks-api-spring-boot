@@ -1,4 +1,4 @@
-package com.byandrev.lnks.dao;
+package com.byandrev.lnks.repositories;
 
 import com.byandrev.lnks.entities.UserEntity;
 import org.springframework.data.repository.CrudRepository;

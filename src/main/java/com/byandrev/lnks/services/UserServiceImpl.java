@@ -1,6 +1,6 @@
 package com.byandrev.lnks.services;
 
-import com.byandrev.lnks.dao.UserRepository;
+import com.byandrev.lnks.repositories.UserRepository;
 import com.byandrev.lnks.entities.UserEntity;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
