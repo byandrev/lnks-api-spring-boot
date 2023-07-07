@@ -1,17 +1,24 @@
 # Lnks API
 
-### Create application.properties
+
+### Env variables
+
+- Create .env file
 
 ```
-spring.datasource.url=jdbc:mysql://host:3306/database_name
-spring.datasource.username=
-spring.datasource.password=
-spring.datasource.driver-class-name=com.mysql.cj.jdbc.Driver
-
-spring.jpa.database-platform=org.hibernate.dialect.MySQL8Dialect
-spring.jpa.show-sql=true
-spring.jpa.hibernate.ddl-auto=update
-
-jwt.secret.key=
-jwt.time.expiration=
+MYSQL_DATABASE=
+MYSQL_HOST=
+MYSQL_USER=
+MYSQL_PASSWORD=
+JWT_SECRET=
+JWT_TIME=
 ```
+
+
+### Start
+
+`docker compose up -d`
+
+### Stop
+
+`docker stop #container-id`
