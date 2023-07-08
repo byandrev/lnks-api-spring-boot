@@ -1,6 +1,7 @@
 package com.byandrev.lnks.security.filters;
 
-import com.byandrev.lnks.entities.UserEntity;
+import com.byandrev.lnks.dto.UserLoginDTO;
+import com.byandrev.lnks.entities.Response;
 import com.byandrev.lnks.security.jwt.JWTUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
@@ -9,6 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.security.authentication.AuthenticationCredentialsNotFoundException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -29,15 +31,16 @@ public class JWTAuthentificationFilter extends UsernamePasswordAuthenticationFil
 
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        UserEntity userEntity;
+        UserLoginDTO user;
 
         try {
-            userEntity = new ObjectMapper().readValue(request.getInputStream(), UserEntity.class);
+            user = new ObjectMapper().readValue(request.getInputStream(), UserLoginDTO.class);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new AuthenticationCredentialsNotFoundException("Fields error");
         }
 
-        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userEntity.getEmail(), userEntity.getPassword());
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(user.getEmail(), user.getPassword());
+        System.out.println(authenticationToken);
 
         return this.getAuthenticationManager().authenticate(authenticationToken);
     }
@@ -47,9 +50,15 @@ public class JWTAuthentificationFilter extends UsernamePasswordAuthenticationFil
         User user = (User) authResult.getPrincipal();
         String token = jwtUtils.generateAccessToken(user.getUsername());
 
-        Map<String, Object> httpResponse = new HashMap<>();
-        httpResponse.put("token", token);
-        httpResponse.put("username", user.getUsername());
+        Map<String, Object> body = new HashMap<>();
+        body.put("token", token);
+        body.put("username", user.getUsername());
+
+        Response httpResponse = Response.builder()
+                .status(HttpStatus.OK.value())
+                .msg("login successfully")
+                .body(body)
+                .build();
 
         response.addHeader("Authorization", token);
         response.setStatus(HttpStatus.OK.value());
@@ -60,4 +69,16 @@ public class JWTAuthentificationFilter extends UsernamePasswordAuthenticationFil
         super.successfulAuthentication(request, response, chain, authResult);
     }
 
+    @Override
+    protected void unsuccessfulAuthentication(HttpServletRequest request, HttpServletResponse response, AuthenticationException failed) throws IOException, ServletException {
+        Response httpResponse = Response.builder()
+                .status(HttpStatus.UNAUTHORIZED.value())
+                .error(failed.getMessage())
+                .build();
+
+        response.setStatus(HttpStatus.UNAUTHORIZED.value());
+        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+        response.getWriter().write(new ObjectMapper().writeValueAsString(httpResponse));
+        response.getWriter().flush();
+    }
 }
