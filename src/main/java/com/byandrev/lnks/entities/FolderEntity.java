@@ -9,31 +9,34 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "links")
-public class LinkEntity {
+@Table(name = "folders")
+public class FolderEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Size(max = 60)
     @NotBlank
+    @Size(max = 40)
     private String name;
-
-    @Size(max = 255)
-    private String url;
 
     @Size(max = 255)
     private String description;
 
-    @ManyToOne
-    @JoinColumn(name = "folder_id", nullable = false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "user_id", nullable = false)
     @JsonIgnore
-    private FolderEntity folder;
+    private UserEntity user;
+
+    @OneToMany(mappedBy = "folder", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
+    private List<LinkEntity> links;
 
 }

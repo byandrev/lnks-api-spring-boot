@@ -1,9 +1,11 @@
 package com.byandrev.lnks.controllers;
 
 import com.byandrev.lnks.dto.LinkDTO;
+import com.byandrev.lnks.entities.FolderEntity;
 import com.byandrev.lnks.entities.LinkEntity;
 import com.byandrev.lnks.entities.Response;
 import com.byandrev.lnks.entities.UserEntity;
+import com.byandrev.lnks.services.FolderService;
 import com.byandrev.lnks.services.LinkService;
 import com.byandrev.lnks.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.security.Principal;
 import java.util.List;
+import java.util.Optional;
 
 @RestController()
 @RequestMapping("/links")
@@ -25,15 +28,29 @@ public class LinkController {
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private FolderService folderService;
+
     @GetMapping
-    public ResponseEntity<Response> getAll(Principal principal) {
-        UserEntity userEntity = userService.getUserByEmail(principal.getName());
-        List<LinkEntity> links = linkService.getAll(userEntity);
+    public ResponseEntity<Response> getAll(Principal principal, @RequestParam(name = "folder_id") Long folderId) {
+        UserEntity user = userService.getUserByEmail(principal.getName());
+        Optional<FolderEntity> folder = folderService.getById(folderId, user);
+
+        if (folder.isPresent()) {
+            List<LinkEntity> links = linkService.getAllByFolder(folder.get());
+
+            Response httpResponse = Response.builder()
+                    .status(HttpStatus.OK.value())
+                    .msg("all links of folder #"+folder.get().getId())
+                    .body(links)
+                    .build();
+
+            return new ResponseEntity<>(httpResponse, HttpStatusCode.valueOf(httpResponse.getStatus()));
+        }
 
         Response httpResponse = Response.builder()
-                .status(HttpStatus.OK.value())
-                .msg("all links")
-                .body(links)
+                .status(HttpStatus.NOT_FOUND.value())
+                .msg("folder no exist")
                 .build();
 
         return new ResponseEntity<>(httpResponse, HttpStatusCode.valueOf(httpResponse.getStatus()));
@@ -42,13 +59,14 @@ public class LinkController {
     @PostMapping
     public ResponseEntity<Response> create(Principal principal, @RequestBody LinkDTO linkDTO) {
         try {
-            UserEntity userEntity = userService.getUserByEmail(principal.getName());
+            UserEntity user = userService.getUserByEmail(principal.getName());
+            FolderEntity folder = folderService.getById(linkDTO.getFolderId(), user).orElse(null);
 
             LinkEntity link = LinkEntity.builder()
                     .name(linkDTO.getName())
                     .url(linkDTO.getUrl())
                     .description(linkDTO.getDescription())
-                    .user(userEntity)
+                    .folder(folder)
                     .build();
 
             linkService.create(link);

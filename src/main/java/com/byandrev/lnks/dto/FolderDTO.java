@@ -7,14 +7,10 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LinkDTO {
+public class FolderDTO {
 
     private String name;
 
-    private String url;
-
     private String description;
-
-    private Long folderId;
 
 }

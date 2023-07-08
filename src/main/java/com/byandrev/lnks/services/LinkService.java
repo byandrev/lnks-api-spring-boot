@@ -1,5 +1,6 @@
 package com.byandrev.lnks.services;
 
+import com.byandrev.lnks.entities.FolderEntity;
 import com.byandrev.lnks.entities.LinkEntity;
 import com.byandrev.lnks.entities.UserEntity;
 
@@ -12,7 +13,7 @@ public interface LinkService {
 
     Optional<LinkEntity> getById(Long id);
 
-    List<LinkEntity> getAll(UserEntity userEntity);
+    List<LinkEntity> getAllByFolder(FolderEntity folderEntity);
 
     void delete(Long id);
 

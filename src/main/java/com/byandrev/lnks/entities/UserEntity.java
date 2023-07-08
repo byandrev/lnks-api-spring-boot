@@ -39,7 +39,6 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     @JsonIgnore
-    private List<LinkEntity> links = new ArrayList<>();
-
+    private List<FolderEntity> folders = new ArrayList<>();
 
 }
